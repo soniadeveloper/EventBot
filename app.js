@@ -57,5 +57,8 @@ for (const file of commandFiles) { // for each command file, require it
   console.log(`Loading ${cmd.name}`);
 }
 
+// database configuration
+client.db.run("CREATE TABLE IF NOT EXISTS calendar (guild TEXT, events TEXT, notifs INTEGER)");
+
 // login with token (shhh it's a secret)
 client.login(config.token);
