@@ -32,11 +32,13 @@ client.color = color;
 client.db = db;
 client.prefix = config.prefix;
 
-fs.readdir("events/", (err, files) => {
+// load events
+
+fs.readdir("events/", (err, files) => { // read the events folter
   if (err) {
     return console.error(err);
   }
-  files.forEach(file => {
+  files.forEach(file => { // for each js file, require it
     if (!file.endsWith(".js")) return;
     const event = require(`./events/${file}`);
     let eventName = file.split(".")[0];
@@ -45,12 +47,15 @@ fs.readdir("events/", (err, files) => {
   });
 });
 
-const commandFiles = fs.readdirSync('commands/').filter(file => file.endsWith('.js'));
+//load commands
 
-for (const file of commandFiles) {
+const commandFiles = fs.readdirSync('commands/').filter(file => file.endsWith('.js')); // get command files
+
+for (const file of commandFiles) { // for each command file, require it
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
   console.log(`Loading ${cmd.name}`);
 }
 
+// login with token (shhh it's a secret)
 client.login(config.token);
