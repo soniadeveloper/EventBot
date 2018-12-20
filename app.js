@@ -11,7 +11,7 @@ const config = require('./config.json');
 
 // initializations
 var app = new express();
-const client=  new Discord();
+const client =  new Discord.Client();
 
 // initialize app
 app.use(bodyParser.urlencoded({extended: true}));
@@ -19,7 +19,7 @@ app.use(express.static('public'));
 
 // initialize database
 var fs = require('fs');
-var dbFile = './.data/eventbot.db';
+var dbFile = './data/eventbot.db';
 var exists = fs.existsSync(dbFile);
 var db = new sqlite3.Database(dbFile);
 
@@ -54,7 +54,7 @@ const commandFiles = fs.readdirSync('commands/').filter(file => file.endsWith('.
 for (const file of commandFiles) { // for each command file, require it
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
-  console.log(`Loading ${cmd.name}`);
+  console.log(`Loading ${command.name}`);
 }
 
 // database configuration

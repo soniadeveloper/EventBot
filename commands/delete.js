@@ -7,7 +7,7 @@ module.exports = {name: "delete", run(client, msg, args){
     client.db.get(`SELECT events FROM calendar WHERE guild = ${msg.guild.id}`, (err, row) => {
       if (err) { // if an error occurs
         console.log("no the error is here");
-        console.error(err.message);
+        console.error("Delete.js selection error: ", err.message);
         msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setDescription("❗️This server has no events to delete!"));
       }
       if (!row) { // if the server does not have any events
@@ -23,7 +23,7 @@ module.exports = {name: "delete", run(client, msg, args){
       console.log(typeof insert);
       client.db.run(`UPDATE calendar SET events = ? WHERE guild = ?`, [insert, msg.guild.id], (err) => {
         if (err) {
-          console.error(err.message);
+          console.error("Delete.js update error: ", err.message);
         }
         else {
           msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setDescription(`✅ Event \`${toDel}\` has been deleted!`));

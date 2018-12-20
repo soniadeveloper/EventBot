@@ -1,4 +1,4 @@
 *.json
 *.sqlite
-/.data
+/data
 /node_modules

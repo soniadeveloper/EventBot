@@ -6,7 +6,7 @@ module.exports = {name: "view", run(client, msg, args) {
     var toView = args[0]; // id of the event to view
     client.db.get(`SELECT events FROM calendar WHERE guild = ${msg.guild.id}`, (err, row) => {
       if (err) { // if there is an error
-        console.error(err);
+        console.error("View.js selection error: ", err);
       }
       if (!row) { // if the server does not exist in the database
         msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setDescription("❗️That event does not exist!"));

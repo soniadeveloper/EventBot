@@ -1,4 +1,4 @@
-modules.exports = {name: "help", run(client, msg, args) {
+module.exports = {name: "help", run(client, msg, args) {
   msg.channel.send(new client.discord.RichEmbed()
   .setColor(client.color)
   .setTitle("❔ Help")

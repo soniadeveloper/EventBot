@@ -8,7 +8,7 @@ module.exports = {name: "events", run(client, msg, args) {
       };
       client.db.run("INSERT INTO calendar (guild, event, notifs) VALUES (?, ?, ?)" [msg.guild.id, JSON.stringify(bigObj), 1], (err) => {
         if (err) {
-          console.error(err);
+          console.error("Events.js insertion error: ", err);
         }
         console.log("row created");
         msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events'`).setDescription("This server has no events.")); // insert row into table since it was just created
@@ -22,10 +22,10 @@ module.exports = {name: "events", run(client, msg, args) {
       };
       client.db.run("INSERT INTO calendar (guild, event, notifs) VALUES (?, ?, ?)" [msg.guild.id, JSON.stringify(bigObj), 1], (err) => {
         if (err) {
-          console.error(err);
+          console.error("Events.js insertion error: ", err);
         }
         console.log("row created");
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events'`).setDescription("This server has no events.")); // insert row into table since it was just created
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).setDescription("This server has no events.")); // insert row into table since it was just created
       });
     }
 
@@ -46,6 +46,5 @@ module.exports = {name: "events", run(client, msg, args) {
         }
         msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).setDescription(parse));
       }
-    }
-  })
+  });
 },}

@@ -28,7 +28,7 @@ module.exports = {name: "create", run(client, msg, args){
         d.setYear(split[2]);
         event.date = split;
         console.log("Date: ", d.getMonth(), d.getDay(), d.getFullYear());
-        client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place?\``));
+        msg.channel.send(client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place?\``));
       }
       else if (event.time === undefined && event.desc === undefined && event.date !== undefined && event.name !== undefined) { // if the time hasn't been defined yet
         time = m.content;
@@ -78,29 +78,32 @@ module.exports = {name: "create", run(client, msg, args){
         m.react("❓").then(console.log("question")).catch(console.error);
         m.react("❌").then(console.log("x")).catch(console.error);
         client.db.get(`SELECT events FROM calendar WHERE guild = ${msg.guild.id}`, (err, row) => {
-        if (!row) {
-          var obj = {
-            list: [event]
-          };
-          var newEvents = JSON.stringify(obj);
-          client.db.run("INSERT INTO calendar (guild, events, notifs) VALUES (?, ?, ?)", [msg.guild.id, newEvents, 1], (err) => {
-            if (err) {
-              console.error(err);
-            }
-            console.log("Object after insertion: ", this.event);
-          });
-        }
-        else {
-          var old = JSON.parse(row.event);
-          old.list.push(event);
-          var newEvent = JSON.stringify(old);
-          client.db.run("UPDATE calendar SET events = ? WHERE guild = ?", [newEvent, msg.guild.id], (err) => {
-            if (err) {
-              console.error(err);
-            }
-            console.log("Updated object after insertion: ", this.event);
-          });
-        }
+          if (err) {
+            console.error("Create.js selection error: ", err);
+          }
+          if (!row) {
+            var obj = {
+              list: [event]
+            };
+            var newEvents = JSON.stringify(obj);
+            client.db.run("INSERT INTO calendar (guild, events, notifs) VALUES (?, ?, ?)", [msg.guild.id, newEvents, 1], (err) => {
+              if (err) {
+                console.error("Create.js insertion error: ", err);
+              }
+              console.log("Object after insertion: ", this.event);
+            });
+          }
+          else {
+            var old = JSON.parse(row.event);
+            old.list.push(event);
+            var newEvent = JSON.stringify(old);
+            client.db.run("UPDATE calendar SET events = ? WHERE guild = ?", [newEvent, msg.guild.id], (err) => {
+              if (err) {
+                console.error("Create.js update error: ", err);
+              }
+              console.log("Updated object after insertion: ", this.event);
+            });
+          }
       });
     }).catch(console.error);
     }
