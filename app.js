@@ -61,5 +61,13 @@ for (const file of commandFiles) { // for each command file, require it
 // database configuration
 client.db.run("CREATE TABLE IF NOT EXISTS calendar (guild TEXT, events TEXT, notifs INTEGER)");
 
+setInterval(function() {
+  client.db.get(`SELECT * FROM calendar`, (err, rows) => {
+    if (err) {
+      console.error("App.js selection error: ", err);
+    }
+  });
+}, 15000);
+
 // login with token (shhh it's a secret)
 client.login(config.token);

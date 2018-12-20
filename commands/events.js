@@ -52,7 +52,7 @@ module.exports = {name: "events", run(client, msg, args) {
             names += `\n${event.name}`;
             dates += `\n${event.date[0]}/${event.date[1]}/${event.date[2]}`;
           }
-          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).addField("ID", ids).addField("Name", names).addField("Date", dates));
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).addField("ID", ids, true).addField("Name", names, true).addField("Date", dates, true));
         }
       }
   });
