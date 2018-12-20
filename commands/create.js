@@ -7,6 +7,7 @@ module.exports = {name: "create", run(client, msg, args){
 
   msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("Welcome to the Event Creation Wizard!\n`What would you like to name your event?`").setFooter("Type \"exit\" to leave the creation wizard at any time."));
 
+  const collector = new client.discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id, {time: 1000000});
   // start collector
   collector.on("collect", m => {
     if (m.content === "exit") {
@@ -16,7 +17,7 @@ module.exports = {name: "create", run(client, msg, args){
     else {
       if (event.name === undefined) { // if the event has not been given a name
         event.name = m.content;
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).setDescription(`\`What time is the event taking place?\``));
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).setDescription(`\`What date is the event taking place?\``));
       }
       else if (event.date === undefined && event.name !== undefined) {
         //if the event has not been given a date
@@ -28,9 +29,9 @@ module.exports = {name: "create", run(client, msg, args){
         d.setYear(split[2]);
         event.date = split;
         console.log("Date: ", d.getMonth(), d.getDay(), d.getFullYear());
-        msg.channel.send(client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place?\``));
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place?\``));
       }
-      else if (event.time === undefined && event.desc === undefined && event.date !== undefined && event.name !== undefined) { // if the time hasn't been defined yet
+      else if (event.time === undefined && event.date !== undefined && event.name !== undefined) { // if the time hasn't been defined yet
         time = m.content;
         var split = m.content.split(':');
         split[0] = parseInt(split[0]);
@@ -67,7 +68,7 @@ module.exports = {name: "create", run(client, msg, args){
       msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("Event creation has been cancelled"));
     }
     else { // if all the parameters have been given
-      msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("ID", `${event.id}`).addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).addField("Description", `${event.desc}`).setDescription(`✅ \`Event has been created!\``)).then(m => {
+      msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).addField("Description", `${event.desc}`).setDescription(`✅ \`Event has been created!\``)).then(m => {
         event.id = m.id;
         event.fullDate = d; // the full date object
         event.attending = [];
@@ -77,6 +78,7 @@ module.exports = {name: "create", run(client, msg, args){
         m.react("✅").then(console.log("check")).catch(console.error);
         m.react("❓").then(console.log("question")).catch(console.error);
         m.react("❌").then(console.log("x")).catch(console.error);
+
         client.db.get(`SELECT events FROM calendar WHERE guild = ${msg.guild.id}`, (err, row) => {
           if (err) {
             console.error("Create.js selection error: ", err);
@@ -90,11 +92,11 @@ module.exports = {name: "create", run(client, msg, args){
               if (err) {
                 console.error("Create.js insertion error: ", err);
               }
-              console.log("Object after insertion: ", this.event);
+              console.log("Object after insertion: ", this.events);
             });
           }
           else {
-            var old = JSON.parse(row.event);
+            var old = JSON.parse(row.events);
             old.list.push(event);
             var newEvent = JSON.stringify(old);
             client.db.run("UPDATE calendar SET events = ? WHERE guild = ?", [newEvent, msg.guild.id], (err) => {

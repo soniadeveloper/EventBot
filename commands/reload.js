@@ -1,5 +1,5 @@
 module.exports = { name: "reload", run(client, msg, args) {
-  if (msg.author.id !== process.env.OWNER_ID) return;
+  if (msg.author.id !== client.config.owner_id) return;
   if(!args || args.size < 1) return msg.channel.send({embed: {color: client.color, description: "❗️Must provide a command name to reload."}}).then(msg => {msg.delete(2000).then(()=>{console.log("sent")}).catch(err => {console.error(err)})}).catch(console.error);
   const commandName = args[0];
 

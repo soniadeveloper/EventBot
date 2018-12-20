@@ -26,10 +26,11 @@ var db = new sqlite3.Database(dbFile);
 // initialize client variables
 const color = 0x6ad6ff;
 
-client.discord = Discord;
-client.commands = new Discord.Collection();
 client.color = color;
+client.commands = new Discord.Collection();
+client.config = config;
 client.db = db;
+client.discord = Discord;
 client.prefix = config.prefix;
 
 // load events
