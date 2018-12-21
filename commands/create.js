@@ -115,6 +115,13 @@ module.exports = {name: "create", run(client, msg, args){
             });
           }
       });
+
+      // collects reactions
+      const reactCollector = new client.discord.ReactionCollector(m, r => r.name === "✅" || r.name === "❓" || r.name === "❌", {maxUsers: msg.guild.memberCount});
+      reactCollector.on("collect", r => {
+
+      })
+
     }).catch(console.error);
     }
   });
