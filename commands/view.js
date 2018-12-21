@@ -50,12 +50,40 @@ module.exports = {name: "view", run(client, msg, args) {
 
         var time = `${hour}:${min} ${tod}`; // formatted time
 
+        // generate list of people who are going
+        var attending = events.list[events.list.length - 1].attending;
+        var attStr = "";
+        for (var i = 0; i < attending.length; i++) {
+          var usr = client.users.get(attending[i]);
+          attStr += `${msg.guild.member(usr).displayName}, `;
+        }
+        if (attStr === "") {
+          attStr = "None";
+        }
+
+        // people who might go
+        var maybe = events.list[events.list.length - 1].maybe;
+        var mayStr = "";
+        for (var i = 0; i < maybe.length; i++) {
+          var usr = client.users.get(maybe[i]);
+          mayStr += `${msg.guild.member(usr).displayName}, `;
+        }
+        if (mayStr === "") {
+          mayStr = "None";
+        }
+        // people who can't go
+        var cant = events.list[events.list.length - 1].cantGo;
+        var cantStr = "";
+        for (var i = 0; i < cant.length; i++) {
+          var usr = client.users.get(cant[i]);
+          cantStr += `${msg.guild.member(usr).displayName}, `;
+        }
+        if (cantStr === "") {
+          cantStr = "None";
+        }
+
         // send message
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 Event ID ${event.id}`).addField("Event", `${get.name}`).addField("Date", `${date.toDateString()}`).addField("Time", `${time}`).addField("Description", `${get.desc}`)).then(m => {
-          m.react("✅").then(console.log("check")).catch(console.error);
-          m.react("❓").then(console.log("question")).catch(console.error);
-          m.react("❌").then(console.log("x")).catch(console.error);
-        }).catch(console.error);
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 Event ID ${event.id}`).addField("Event", `${get.name}`).addField("Date", `${date.toDateString()}`).addField("Time", `${time}`).addField("Description", `${get.desc}`).addField("Attending", attStr).addField("Might go", mayStr).addField("Can't go", cantStr));
       }
     });
   }
