@@ -27,6 +27,9 @@ module.exports = {name: "delete", run(client, msg, args){
           console.error("Delete.js update error: ", err.message);
         }
         else {
+          msg.channel.fetchMessage(toDel).then(m => {
+            m.delete();
+          });
           msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setDescription(`✅ Event \`${toDel}\` has been deleted!`));
         }
       });

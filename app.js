@@ -68,13 +68,13 @@ for (const file of commandFiles) { // for each command file, require it
 // database configuration
 client.db.run("CREATE TABLE IF NOT EXISTS calendar (guild TEXT, events TEXT, notifs INTEGER, channel TEXT)");
 
+// checks if it is time to remind a server about an event
 setInterval(function() { // goes through each server and its events to check if reminders should be sent
   client.db.all(`SELECT guild, events, notifs, channel FROM calendar`, (err, rows) => {
     if (err) {
       console.error("App.js selection error: ", err);
     }
     rows.forEach((row) => { // for each server, check if they should be notified about an event
-      var events = JSON.parse(row.events);
       var channel;
       var guild = client.guilds.get(row.guild);
 
@@ -95,6 +95,7 @@ setInterval(function() { // goes through each server and its events to check if 
         else { // if a notification channel is set
           channel = guild.channels.get(row.channel);
         }
+        var events = JSON.parse(row.events);
         events.list.forEach((event) => { // for each event in the list of events of the server
           var eventDate = Date.parse(event.fullDate); // date of event
           var curr = Date.now(); // current time

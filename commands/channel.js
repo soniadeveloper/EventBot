@@ -69,6 +69,10 @@ module.exports = {name: "channel", run(client, msg, args) {
             command.error("channel.js selection error: ", err.message);
           }
           else if (!row) {
+            var obj = {
+              list: []
+            };
+            var str = JSON.stringify(obj);
             client.db.run("INSERT INTO calendar (guild, events, notifs, channel) VALUES (?, ?, ?, ?)", [msg.guild.id, str, 1, id], (err) => {
               if (err) {
                 console.error("Error in channel.js insertion: ", err.message);
