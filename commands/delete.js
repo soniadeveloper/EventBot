@@ -13,7 +13,8 @@ module.exports = {name: "delete", run(client, msg, args){
       if (!row) { // if the server does not have any events
         msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setDescription("❗️This server has no events to delete!"));
       }
-      var json = JSON.parse(row.event);
+      var json = JSON.parse(row.events);
+      console.log(json);
       json.list = json.list.filter((event) => { // filter out the current array of events to exclude the array that will be deleted
         if (event.id !== toDel) {
           return event;

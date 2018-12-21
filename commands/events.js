@@ -34,10 +34,11 @@ module.exports = {name: "events", run(client, msg, args) {
     }
 
     else { // if the server exists in the database
+      console.log(row);
       var events = JSON.parse(row.events);
       console.log(events);
         var parse = "";
-        if (events.list.length <= 0) { // if there are no events
+        if (events === null || events.list.length <= 0) { // if there are no events
             console.log("row created");
             msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).setDescription("This server has no events.")); // insert row into table since it was just created
         }

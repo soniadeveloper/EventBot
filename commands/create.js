@@ -17,7 +17,7 @@ module.exports = {name: "create", run(client, msg, args){
     else {
       if (event.name === undefined) { // if the event has not been given a name
         event.name = m.content;
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).setDescription(`\`What date is the event taking place?\``));
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).setDescription(`\`What date is the event taking place?\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
       }
       else if (event.date === undefined && event.name !== undefined) {
         //if the event has not been given a date
@@ -29,7 +29,7 @@ module.exports = {name: "create", run(client, msg, args){
         d.setYear(split[2]);
         event.date = split;
         console.log("Date: ", d.getMonth(), d.getDay(), d.getFullYear());
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place?\``));
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place?\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
       }
       else if (event.time === undefined && event.date !== undefined && event.name !== undefined) { // if the time hasn't been defined yet
         time = m.content;
@@ -83,7 +83,8 @@ module.exports = {name: "create", run(client, msg, args){
           if (err) {
             console.error("Create.js selection error: ", err);
           }
-          if (!row) {
+          if (!row) { // if server was just added to the table or if there's a bug?
+            console.log("create.js new insertion");
             var obj = {
               list: [event]
             };
@@ -95,9 +96,16 @@ module.exports = {name: "create", run(client, msg, args){
               console.log("Object after insertion: ", this.events);
             });
           }
-          else {
+          else { // if the server already exists in the table
+            console.log("create.js updating existing object");
             var old = JSON.parse(row.events);
-            old.list.push(event);
+            if (old === null) {
+              old.list = [event];
+            }
+            else {
+              old.list.push(event);
+            }
+            console.log(old);
             var newEvent = JSON.stringify(old);
             client.db.run("UPDATE calendar SET events = ? WHERE guild = ?", [newEvent, msg.guild.id], (err) => {
               if (err) {
