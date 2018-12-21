@@ -8,6 +8,7 @@ module.exports = {name: "help", run(client, msg, args) {
   .addField("`events`", "List the events created in the server.")
   .addField("`view [ID]`", "View details of an event with a given ID")
   .addField("`notifs [ON/OFF]`", "Change the notification settings in the server.")
+  .addField("`channel [name/RESET]`", "Set the channel where event notifications are sent.")
   .addField("`invite`", "Creates an invite link to add Event Bot to other servers.")
   .addField("`info`", "Sends information about Event Bot.")
   .setFooter("Event Bot"));

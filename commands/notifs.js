@@ -11,7 +11,7 @@ module.exports = {name: "notifs", run(client, msg, args){
           list: []
         };
         var string = JSON.stringify(obj);
-        client.db.run(`INSERT INTO calendar (guild, events, notifs) VALUES (?, ?, ?)`, [msg.guild.id, string, 1], (err) => {
+        client.db.run(`INSERT INTO calendar (guild, events, notifs, channel) VALUES (?, ?, ?, ?)`, [msg.guild.id, string, 1, "010010001110"], (err) => {
           if (err) {
             console.error("Notifs.js insertion error: ", err);
           }

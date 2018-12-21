@@ -7,7 +7,7 @@ module.exports = {name: "events", run(client, msg, args) {
         list: []
       };
       var string = JSON.stringify(bigObj);
-      client.db.run("INSERT INTO calendar (guild, events, notifs) VALUES (?, ?, ?)", [msg.guild.id, string, 1], (err) => {
+      client.db.run("INSERT INTO calendar (guild, events, notifs, channel) VALUES (?, ?, ?, ?)", [msg.guild.id, string, 1, "010010001110"], (err) => {
         if (err) {
           console.log("an error did occur");
           console.error("Events.js insertion error: ", err);
@@ -23,7 +23,7 @@ module.exports = {name: "events", run(client, msg, args) {
         list: []
       };
       var string = JSON.stringify(bigObj);
-      client.db.run("INSERT INTO calendar (guild, events, notifs) VALUES (?, ?, ?)", [msg.guild.id, string, 1], (err) => {
+      client.db.run("INSERT INTO calendar (guild, events, notifs, channel) VALUES (?, ?, ?, ?)", [msg.guild.id, string, 1, "010010001110"], (err) => {
         if (err) {
           console.log("an error did not occur");
           console.error("Events.js insertion error: ", err);
