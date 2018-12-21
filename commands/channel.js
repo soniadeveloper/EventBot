@@ -2,7 +2,6 @@ module.exports = {name: "channel", run(client, msg, args) {
   if (args.length === 0) { // if no argument was given
     var chName;
     client.db.get(`SELECT channel FROM calendar WHERE guild = ${msg.guild.id}`, (err, row) => {
-      console.log(row.channel);
       if (err) {
         console.error("Error in channel.js selection: ", err.message);
       }

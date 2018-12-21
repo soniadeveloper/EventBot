@@ -69,7 +69,7 @@ for (const file of commandFiles) { // for each command file, require it
 client.db.run("CREATE TABLE IF NOT EXISTS calendar (guild TEXT, events TEXT, notifs INTEGER, channel TEXT)");
 
 setInterval(function() { // goes through each server and its events to check if reminders should be sent
-  client.db.all(`SELECT guild, events, notifs FROM calendar`, (err, rows) => {
+  client.db.all(`SELECT guild, events, notifs, channel FROM calendar`, (err, rows) => {
     if (err) {
       console.error("App.js selection error: ", err);
     }
@@ -101,6 +101,7 @@ setInterval(function() { // goes through each server and its events to check if 
           if (row.notifs === 1) { // if notifications are on
             var diff = eventDate - curr; // difference between event date and current time
             var timeMsg; // initialize time message
+            console.log(row.guild, channel.id, channel.name);
             if (diff >= WEEK && diff <= WEEK + TIMEOUT) { // week + timeout >= diff >= week
               timeMsg =  "in 1 week";
               channel.send(new Discord.RichEmbed()
