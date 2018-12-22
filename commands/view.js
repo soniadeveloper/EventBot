@@ -51,7 +51,7 @@ module.exports = {name: "view", run(client, msg, args) {
         var time = `${hour}:${min} ${tod}`; // formatted time
 
         // generate list of people who are going
-        var attending = events.list[events.list.length - 1].attending;
+        var attending = json.list[json.list.length - 1].attending;
         var attStr = "";
         for (var i = 0; i < attending.length; i++) {
           var usr = client.users.get(attending[i]);
@@ -62,7 +62,7 @@ module.exports = {name: "view", run(client, msg, args) {
         }
 
         // people who might go
-        var maybe = events.list[events.list.length - 1].maybe;
+        var maybe = json.list[json.list.length - 1].maybe;
         var mayStr = "";
         for (var i = 0; i < maybe.length; i++) {
           var usr = client.users.get(maybe[i]);
@@ -72,7 +72,7 @@ module.exports = {name: "view", run(client, msg, args) {
           mayStr = "None";
         }
         // people who can't go
-        var cant = events.list[events.list.length - 1].cantGo;
+        var cant = json.list[json.list.length - 1].cantGo;
         var cantStr = "";
         for (var i = 0; i < cant.length; i++) {
           var usr = client.users.get(cant[i]);
@@ -83,7 +83,7 @@ module.exports = {name: "view", run(client, msg, args) {
         }
 
         // send message
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 Event ID ${event.id}`).addField("Event", `${get.name}`).addField("Date", `${date.toDateString()}`).addField("Time", `${time}`).addField("Description", `${get.desc}`).addField("Attending", attStr).addField("Might go", mayStr).addField("Can't go", cantStr));
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 Event ID ${event.id}`).addField("Event", `${get.name}`).addField("Date", `${date.toDateString()}`).addField("Time", `${time}`).addField("Description", `${get.desc}`).addField("✅ Attending", attStr).addField("❓ Might go", mayStr).addField("❌ Can't go", cantStr));
       }
     });
   }
