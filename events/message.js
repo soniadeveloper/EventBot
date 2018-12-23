@@ -10,7 +10,7 @@ module.exports = (client, msg) => {
     prefix = client.prefix;
   }
 
-  prefix = (client.prefixes.get(msg.guild.id) !== null) ? client.prefixes.get(msg.guild.id) : process.env.PREFIX;
+  prefix = (client.prefixes.get(msg.guild.id) !== null) ? client.prefixes.get(msg.guild.id) : client.prefix;
 
   if (msg.content.startsWith(prefix)) {
     // command handler
