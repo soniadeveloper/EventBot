@@ -3,6 +3,7 @@ module.exports = {name: "help", run(client, msg, args) {
   .setColor(client.color)
   .setTitle("❔ Help")
   .setDescription("Here is a list of things that Event Bot can do!")
+  .addField("`prefix [PREFIX]`", "Change the current prefix to a different one. Useful for servers with many bots.")
   .addField("`create`", "Walks you through the Event Creation Wizard.")
   .addField("`delete [ID]`", "Deletes an event with the given Event ID.")
   .addField("`events`", "List the events created in the server.")

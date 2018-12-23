@@ -1,6 +1,16 @@
 module.exports = (client, msg) => {
   if (msg.author.bot) return; // the bot shouldn't respond to other bots
-  const prefix = client.prefix;
+  let prefix;
+
+  if (msg.guild !== null && client.prefixes.get(msg.guild.id) === null || client.prefixes.get(msg.guild.id) === undefined) {
+    client.prefixes.set(msg.guild.id, client.prefix);
+  }
+
+  else if (msg.guild === null) {
+    prefix = client.prefix;
+  }
+
+  prefix = (client.prefixes.get(msg.guild.id) !== null) ? client.prefixes.get(msg.guild.id) : process.env.PREFIX;
 
   if (msg.content.startsWith(prefix)) {
     // command handler

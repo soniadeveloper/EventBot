@@ -138,7 +138,12 @@ module.exports = {name: "create", run(client, msg, args){
                 var userArr = coll.users.array();
                 var user = userArr[userArr.length - 1];
                 events.list.splice(index, 1);
-                if (user.id !== client.config.bot_id) {
+                let alreadyGoing = false;
+                if (get[0].attending.includes(user.id)) {
+                  alreadyGoing = true;
+                  events.list.push(get[0]);
+                }
+                if (user.id !== client.config.bot_id && !alreadyGoing) {
                   get[0].attending.push(user.id);
                   events.list.push(get[0]);
                   var send = JSON.stringify(events);
@@ -198,7 +203,12 @@ module.exports = {name: "create", run(client, msg, args){
                 events.list.splice(index, 1);
                 var userArr = coll.users.array();
                 var user = userArr[userArr.length - 1];
-                if (user.id !== client.config.bot_id) {
+                let alreadyMaybe = false;
+                if (get[0].maybe.includes(user.id)) {
+                  alreadyMaybe = true;
+                  events.list.push(get[0]);
+                }
+                if (user.id !== client.config.bot_id && !alreadyMaybe) {
                   get[0].maybe.push(user.id);
                   events.list.push(get[0]);
                   var send = JSON.stringify(events);
@@ -256,7 +266,12 @@ module.exports = {name: "create", run(client, msg, args){
                 events.list.splice(index, 1);
                 var userArr = coll.users.array();
                 var user = userArr[userArr.length - 1];
-                if (user.id !== client.config.bot_id) {
+                let alreadyCant = false;
+                if (get[0].cantGo.includes(user.id)) {
+                  alreadyCant = true;
+                  events.list.push(get[0]);
+                }
+                if (user.id !== client.config.bot_id && !alreadyCant) {
                   get[0].cantGo.push(user.id);
                   events.list.push(get[0]);
                   var send = JSON.stringify(events);

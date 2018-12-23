@@ -4,6 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const Discord = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
+const Enmap = require('enmap');
+const EnmapLevel = require('enmap-level');
 
 // can't forget the config file
 
@@ -12,6 +14,8 @@ const config = require('./config.json');
 // initializations
 var app = new express();
 const client =  new Discord.Client();
+var prefixSrc = new EnmapLevel({name: "prefixes"});
+var prefixes = new Enmap({source: prefixSrc});
 
 // initialize app
 app.use(bodyParser.urlencoded({extended: true}));
@@ -32,6 +36,7 @@ client.config = config;
 client.db = db;
 client.discord = Discord;
 client.prefix = config.prefix;
+client.prefixes = prefixes;
 
 // time constants
 const WEEK = 604800000;
