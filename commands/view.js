@@ -83,7 +83,7 @@ module.exports = {name: "view", run(client, msg, args) {
         }
 
         // send message
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 Event ID ${event.id}`).addField("Event", `${get.name}`).addField("Date", `${date.toDateString()}`).addField("Time", `${time}`).addField("Description", `${get.desc}`).addField("✅ Attending", attStr).addField("❓ Might go", mayStr).addField("❌ Can't go", cantStr)).then(
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 Event ID ${event.id}`).addField("Event", `${get.name}`).addField("Date", `${date.toDateString()}`).addField("Time", `${time}`).addField("Description", `${get.desc}`).addField("✅ Attending", attStr).addField("❓ Might go", mayStr).addField("❌ Can't go", cantStr)).then(m => {
           // allow responses to be re-added
 
           // collects reactions
@@ -283,8 +283,9 @@ module.exports = {name: "view", run(client, msg, args) {
                   });
                 break;
               }
-        ).catch(err => {console.error("err at sending view.js message", err.message)});
-      }
-    });
+        });
+      }).catch(err => {console.error("err at sending view.js message", err.message)});
   }
+});
+}
 },}

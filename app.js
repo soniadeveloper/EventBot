@@ -74,6 +74,7 @@ for (const file of commandFiles) { // for each command file, require it
 client.db.run("CREATE TABLE IF NOT EXISTS calendar (guild TEXT, events TEXT, notifs INTEGER, channel TEXT)");
 
 // checks if it is time to remind a server about an event
+// FIXME: find out why this only works once
 setInterval(function() { // goes through each server and its events to check if reminders should be sent
   client.db.all(`SELECT guild, events, notifs, channel FROM calendar`, (err, rows) => {
     if (err) {
@@ -110,6 +111,7 @@ setInterval(function() { // goes through each server and its events to check if 
             var endDiff = eventEnd - curr; // difference between event end and current time
             var timeMsg; // initialize time message
             if (diff >= WEEK && diff <= WEEK + TIMEOUT) { // week + timeout >= diff >= week
+              console.log("week remind");
               timeMsg =  "in 1 week";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -118,6 +120,7 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (diff >= (DAY * 3) && diff <= (DAY * 3) + TIMEOUT) { // happening in 3 days
+              console.log("3 day remind");
               timeMsg = "in 3 days";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -126,6 +129,7 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (diff >= DAY && diff <= DAY + TIMEOUT) { // happening in 1 day
+              console.log("1 day remind");
               timeMsg = "in 1 day";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -134,6 +138,7 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (diff >= HOUR && diff <= HOUR + TIMEOUT) { // 1 hour
+              console.log("1 hour remind");
               timeMsg = "in 1 hour";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -142,6 +147,7 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (diff >= (MIN * 30) && diff <= (MIN * 30) + TIMEOUT) { // 30 minutes
+              console.log("30 min remind");
               timeMsg = "in 30 minutes";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -150,6 +156,7 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (diff >= (MIN * 5) && diff <= (MIN * 5) + TIMEOUT) { // 5 mintues
+              console.log("5 min remind");
               timeMsg = "in 5 minutes";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -158,6 +165,7 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (diff >= 0 && diff <= TIMEOUT) { // now
+              console.log("now remind");
               timeMsg = "now";
               channel.send(new Discord.RichEmbed()
               .setColor(color)
@@ -166,10 +174,11 @@ setInterval(function() { // goes through each server and its events to check if 
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
             }
             else if (endDiff >= 0 && endDiff <= TIMEOUT) {
+              console.log("end remind");
               channel.send(new Discord.RichEmbed()
               .setColor(color)
               .setTitle("🔕 Event Reminder")
-              .setDescription(`Your event, \`${event.name}\`, has ended.`)).then(
+              .setDescription(`Your event, \`${event.name}\`, has ended.`)).then(m => {
                 var i = events.list.indexOf(event);
                 events.list.splice(i, 1);
                 var send = JSON.stringify(events);
@@ -178,7 +187,7 @@ setInterval(function() { // goes through each server and its events to check if 
                     console.error("error deleting past event: ", err.message);
                   }
                 });
-              ).catch(err => {
+              }).catch(err => {
                 console.error(err.message);
               });
             }

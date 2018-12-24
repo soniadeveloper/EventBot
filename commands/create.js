@@ -4,6 +4,7 @@ module.exports = {name: "create", run(client, msg, args){
   var d = new Date();
   var endDate = new Date();
   var time;
+  var endTime;
   var desc;
 
   msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("Welcome to the Event Creation Wizard!\n`What would you like to name your event?`").setFooter("Type \"exit\" to leave the creation wizard at any time."));
@@ -110,8 +111,9 @@ module.exports = {name: "create", run(client, msg, args){
         else {
           d.setHours(split[0], split[1], 0);
           event.endTime = split;
+          endTime = m.content;
           console.log("Time: ", event.time);
-          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).setDescription(`\`What is the description of this event?\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).setDescription(`\`What is the description of this event?\``).addField("End Time", `${endDate.toDateString()}, ${time}`).setFooter("Type \"exit\" to leave the creation wizard at any time"));
         }
       }
       else if (event.desc === undefined && event.endTime !== undefined && event.endDate !== undefined && event.time !== undefined && event.date !== undefined && event.name !== undefined) { // if the description hasn't been defined yet
@@ -119,7 +121,8 @@ module.exports = {name: "create", run(client, msg, args){
         var desc = m.content;
         event.desc = desc;
         console.log("event description: ", event.desc);
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).addField("Description", `${desc}`).setDescription(`\`Is this correct? Type YES to confirm.\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        // FIXME: get rid of unexpected token error
+        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`)..addField("End Time", `${endDate.toDateString()}, ${time}`).addField("Description", `${desc}`).setDescription(`\`Is this correct? Type YES to confirm.\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
       }
       else if (event.desc !== undefined && m.content.toLowerCase() === "yes") {
         collector.stop();
