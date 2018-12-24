@@ -45,15 +45,13 @@ module.exports = {name: "events", run(client, msg, args) {
         else { // if there are events
           var ids = "";
           var names = "";
-          var dates = "";
           for (var i = 0; i < events.list.length; i++) {
             console.log(events.list[i]);
             var event = events.list[i];
             ids += `\n${event.id}`;
             names += `\n${event.name}`;
-            dates += `\n${event.date[0]}/${event.date[1]}/${event.date[2]}`;
           }
-          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).addField("ID", ids, true).addField("Name", names, true).addField("Date", dates, true));
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle(`📅 ${msg.guild.name}'s Events`).addField("ID", ids, true).addField("Name", names, true));
         }
       }
   });

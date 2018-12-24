@@ -2,11 +2,13 @@ module.exports = {name: "create", run(client, msg, args){
   var event = new Object(); // name, date, time, desc
   var forceEnd = false; // determines if the collector was forced to forceEnd
   var d = new Date();
+  var endDate = new Date();
   var time;
   var desc;
 
   msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("Welcome to the Event Creation Wizard!\n`What would you like to name your event?`").setFooter("Type \"exit\" to leave the creation wizard at any time."));
 
+  var startTime = Date.now();
   const collector = new client.discord.MessageCollector(msg.channel, m => m.author.id === msg.author.id, {time: 1000000});
   // start collector
   collector.on("collect", m => {
@@ -25,11 +27,18 @@ module.exports = {name: "create", run(client, msg, args){
         split[0] = parseInt(split[0]); //month
         split[1] = parseInt(split[1]); //day
         split[2] = parseInt(split[2]); //year
-        d.setMonth(split[0] - 1, split[1]);
-        d.setYear(split[2]);
-        event.date = split;
-        console.log("Date: ", d.getMonth(), d.getDay(), d.getFullYear());
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place? (Use HH:MM AM/PM format)\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        var currDate = new Date();
+        // check if date has already passed
+        if (split[2] < currDate.getFullYear() || (split[2] <= currDate.getFullYear() && (split[0] - 1) < currDate.getMonth()) || (split[2] <= currDate.getFullYear() && (split[0] - 1) <= currDate.getMonth() && split[1] < currDate.getDay())) {
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("❗️ That date has already passed! Please enter a different date.").setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+        else {
+          d.setMonth(split[0] - 1, split[1]);
+          d.setYear(split[2]);
+          event.date = split;
+          console.log("Date: ", d.getMonth(), d.getDay(), d.getFullYear());
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).setDescription(`\`What time is the event taking place? (Use HH:MM AM/PM format)\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
       }
       else if (event.time === undefined && event.date !== undefined && event.name !== undefined) { // if the time hasn't been defined yet
         time = m.content;
@@ -45,12 +54,67 @@ module.exports = {name: "create", run(client, msg, args){
           split[0] = 0;
         }
         split[1] = moreSplit[0];
-        d.setHours(split[0], split[1], 0);
-        event.time = split;
-        console.log("Time: ", event.time);
-        msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).setDescription(`\`What is the description of the event?\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        var date = new Date();
+        if ((date.getDay() === event.date[1] && date.getMonth() === event.date[0] && date.getFullYear() === event.date[2]) && (split[0] < date.getHours() || (split[0] <= date.getHours() && split[1] < date.getMinutes()))) { // if the time had already passed
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("❗️ That time has already passed! Please enter a different date.").setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+        else {
+          d.setHours(split[0], split[1], 0);
+          event.time = split;
+          console.log("Time: ", event.time);
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).setDescription(`\`What date is the event going to end? (Use MM/DD/YYYY format)\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
       }
-      else if (event.desc === undefined && event.time !== undefined && event.date !== undefined && event.name !== undefined) { // if the description hasn't been defined yet
+      else if (event.endDate === undefined && event.time !== undefined && event.date !== undefined && event.name !== undefined) { // duration of the event
+        var split = m.content.split('/');
+        split[0] = parseInt(split[0]); //month
+        split[1] = parseInt(split[1]); //day
+        split[2] = parseInt(split[2]); //year
+        var currDate = new Date();
+        // check if date has already passed
+        if (split[2] < currDate.getFullYear() || (split[2] <= currDate.getFullYear() && (split[0] - 1) < currDate.getMonth()) || (split[2] <= currDate.getFullYear() && (split[0] - 1) <= currDate.getMonth() && split[1] < currDate.getDay())) {
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("❗️ That date has already passed! Please enter a different date.").setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+        else if (split[2] < d.getFullYear() || (split[2] <= d.getFullYear() && (split[0] - 1) < d.getMonth()) || (split[2] <= d.getFullYear() && (split[0] - 1) <= d.getMonth() && split[1] < d.getDay())) { // if the end date is earlier than the start date
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("❗️ That date is earlier than the event's start date! Please enter a different date.").setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+        else {
+          endDate.setMonth(split[0] - 1, split[1]);
+          endDate.setYear(split[2]);
+          event.endDate = split;
+          console.log("Date: ", d.getMonth(), d.getDay(), d.getFullYear());
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).addField("End Time", `${endDate.toDateString()}`).setDescription(`\`What time is the event going to end? (Use HH:MM AM/PM format)\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+      }
+      else if (event.endTime === undefined && event.endDate !== undefined && event.time !== undefined && event.date !== undefined && event.name !== undefined) { // the time the event will end
+        time = m.content;
+        var split = m.content.split(':');
+        split[0] = parseInt(split[0]);
+        var moreSplit = split[1].split(' ');
+        moreSplit[0] = parseInt(moreSplit[0]);
+        var tod = moreSplit[1];
+        if (tod === "PM" && split[0] < 12) { // if it is night time add military time
+          split[0] += 12;
+        }
+        else if (tod === "AM" && split[0] > 11) { // if it is supposed to be midnight change the time to 0
+          split[0] = 0;
+        }
+        split[1] = moreSplit[0];
+        var date = new Date();
+        if ((event.endDate[1] === event.date[1] && event.endDate[0] === event.date[0] && event.endDate[2] === event.date[2]) && (split[0] < event.time[0] || (split[0] <= event.time[0] && split[1] < event.time[1]))) { // if the time had already passed
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("❗️ That time is earlier than the event's start time! Please enter a different date.").setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+        else if ((date.getDay() === event.endDate[1] && date.getMonth() === event.endDate[0] && date.getFullYear() === event.endDate[2]) && (split[0] < date.getHours() || (split[0] <= date.getHours() && split[1] < date.getMinutes()))) { // if the time had already passed
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("❗️ That time has already passed! Please enter a different date.").setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+        else {
+          d.setHours(split[0], split[1], 0);
+          event.endTime = split;
+          console.log("Time: ", event.time);
+          msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).setDescription(`\`What is the description of this event?\``).setFooter("Type \"exit\" to leave the creation wizard at any time"));
+        }
+      }
+      else if (event.desc === undefined && event.endTime !== undefined && event.endDate !== undefined && event.time !== undefined && event.date !== undefined && event.name !== undefined) { // if the description hasn't been defined yet
         console.log(m.content);
         var desc = m.content;
         event.desc = desc;
@@ -67,10 +131,14 @@ module.exports = {name: "create", run(client, msg, args){
     if (forceEnd == true) { // if the collector has been forced to end
       msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("Event creation has been cancelled"));
     }
+    else if (Date.now() >= startTime + 1000000) { // if time ran out
+      msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").setDescription("Event creation has timed out"));
+    }
     else { // if all the parameters have been given
       msg.channel.send(new client.discord.RichEmbed().setColor(client.color).setTitle("📅 Event Creation Wizard").addField("Event", `${event.name}`).addField("Date", `${d.toDateString()}`).addField("Time", `${time}`).addField("Description", `${event.desc}`).setDescription(`✅ \`Event has been created!\``)).then(m => {
         event.id = m.id;
         event.fullDate = d; // the full date object
+        event.fullEndDate = endDate;
         event.attending = [];
         event.cantGo = [];
         event.maybe = [];

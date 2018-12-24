@@ -103,9 +103,11 @@ setInterval(function() { // goes through each server and its events to check if 
         var events = JSON.parse(row.events);
         events.list.forEach((event) => { // for each event in the list of events of the server
           var eventDate = Date.parse(event.fullDate); // date of event
+          var eventEnd = Date.parse(event.fullEndDate);
           var curr = Date.now(); // current time
           if (row.notifs === 1) { // if notifications are on
             var diff = eventDate - curr; // difference between event date and current time
+            var endDiff = eventEnd - curr; // difference between event end and current time
             var timeMsg; // initialize time message
             if (diff >= WEEK && diff <= WEEK + TIMEOUT) { // week + timeout >= diff >= week
               timeMsg =  "in 1 week";
@@ -162,6 +164,23 @@ setInterval(function() { // goes through each server and its events to check if 
               .setTitle("🔔 Event Reminder")
               .setDescription(`Your event, \`${event.name}\`, is happening \`${timeMsg}.\``)
               .setFooter(`Event ID #${event.id} | Use +delete [ID] to cancel this event.`));
+            }
+            else if (endDiff >= 0 && endDiff <= TIMEOUT) {
+              channel.send(new Discord.RichEmbed()
+              .setColor(color)
+              .setTitle("🔕 Event Reminder")
+              .setDescription(`Your event, \`${event.name}\`, has ended.`)).then(
+                var i = events.list.indexOf(event);
+                events.list.splice(i, 1);
+                var send = JSON.stringify(events);
+                client.db.run(`UPDATE calendar SET events = ? WHERE guild = ?`, [send, guild.id], (err) => {
+                  if (err) {
+                    console.error("error deleting past event: ", err.message);
+                  }
+                });
+              ).catch(err => {
+                console.error(err.message);
+              });
             }
           }
         });
